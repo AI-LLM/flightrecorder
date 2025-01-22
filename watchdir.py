@@ -32,13 +32,24 @@ if __name__ == '__main__':
             for change in changes:
                 if not any(x in change[1] for x in [REPOSITORY, 'venv', '.git']):
                     relative_path = os.path.relpath(change[1], watch_dir)
-                    file_name = os.path.splitext(relative_path)[0].replace(os.sep, '_')
+                    file_name = os.path.splitext(relative_path)[0] #.replace(os.sep, '_')
                     file_ext = os.path.splitext(relative_path)[1]
                     new_name = f"{file_name}_{int(time.time())}{file_ext}"
                     if os.path.exists(change[1]):
-                        new_path = os.path.join(rep_dir, new_name)
-                        shutil.copy2(change[1], new_path)
-                    log.info(csvEncode((TAG,) + change + (new_name,)))
+                        if os.path.isdir(change[1]):
+                            new_path = os.path.join(rep_dir, relative_path)
+                            try:
+                                os.makedirs(new_path)
+                                log.info(csvEncode((TAG,) + change + (relative_path,)))
+                            except Exception as e:
+                                print("\033[91m" + "!!!!!!!!" + str(e) + "\033[0m")
+                        else:
+                            new_path = os.path.join(rep_dir, new_name)
+                            try:
+                                shutil.copy2(change[1], new_path)
+                                log.info(csvEncode((TAG,) + change + (new_name,)))
+                            except Exception as e:
+                                print("\033[91m" + "!!!!!!!!" + str(e) + "\033[0m")
 
     except KeyboardInterrupt:
         print('stopped via KeyboardInterrupt')
