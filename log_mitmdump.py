@@ -1,3 +1,18 @@
+# AI Flight Recorder
+# Copyright (C) 2025 Wei Lu (mailwlu@gmail.com)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from common import REPOSITORY,getLog,csvEncode
 
 import sys
@@ -61,13 +76,15 @@ def dump(rec: HttpRecord, rep_dir, log):
     def find_messages(obj):
         if isinstance(obj, dict):
             if "messages" in obj:
-                for msg in obj["messages"]:
+                for i, msg in enumerate(obj["messages"]):
                     if isinstance(msg, dict) and "content" in msg:
                         if isinstance(msg["content"], str):
+                            print("_"*8+"Message " + str(i) + "_"*8)
                             print(msg["content"])
                         elif isinstance(msg["content"], list):
                             for item in msg["content"]:
                                 if isinstance(item, dict) and "text" in item:
+                                    print("_"*8+"Message " + str(i) + "_"*8)
                                     print(item["text"])
             for value in obj.values():
                 find_messages(value)
@@ -97,9 +114,6 @@ def process(rep_dir, log, include_url=None):
     new_path = os.path.join(rep_dir, new_name)
 
     for line in sys.stdin:
-        #if re.match("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]*", line):
-        #    line = "\n"+datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + ": " + line
-        #print(line)
         with open(new_path, 'a') as f:
             f.write(line)
 
