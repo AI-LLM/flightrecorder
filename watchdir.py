@@ -49,7 +49,8 @@ if __name__ == '__main__':
                                 try:
                                     with open(os.path.join(rep_dir, last), 'rb') as f1, open(change[1], 'rb') as f2:
                                         if f1.read() == f2.read():
-                                            log.info(csvEncode((TAG,) + change + (last,)))
+                                            #log.info(csvEncode((TAG,) + change + (last,)))
+                                            print("\033[93m" + "-"*8+ f"skip unchanged, {change[0]},{change[1]},{last}" + "\033[0m")
                                             continue
                                 except Exception as e:
                                     print("\033[91m" + "!"*8 + str(e) + "\033[0m")
