@@ -81,14 +81,14 @@ def dump(rec: HttpRecord, rep_dir, log):
                     if isinstance(msg, dict) and "content" in msg:
                         if isinstance(msg["content"], str):
                             if not message_found:
-                                print("_"*8+"Message " + str(i) + "_"*8)
+                                print("\033[94m" + "_"*8+"Message " + str(i) + "_"*8 + "\033[0m")
                                 message_found = True
                             print(msg["content"])
                         elif isinstance(msg["content"], list):
                             for item in msg["content"]:
                                 if isinstance(item, dict) and "text" in item:
                                     if not message_found:
-                                        print("_"*8+"Message " + str(i) + "_"*8)
+                                        print("\033[94m" + "_"*8+"Message " + str(i) + "_"*8 + "\033[0m")
                                         message_found = True
                                     print(item["text"])
             for value in obj.values():
