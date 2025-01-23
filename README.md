@@ -41,7 +41,7 @@ The *activities.log* file (tagged green) serves as a chronological log of all ev
 
 3: A file was deleted.
 
-The HTTP requests made during model calls contain detailed information, such as the user’s input instructions, how tools like IDEs append context to construct the final LLM prompt, and the server’s response. These details are stored in *http_<timestamp>.json* files.
+The HTTP requests made during model calls contain detailed information, such as the user’s input instructions, how tools like IDEs append context to construct the final LLM prompt, and the server’s response. These details are stored in *http_&lt;timestamp&gt;.json* files.
 
 For all file operations, copies of the files—both before and after modifications—are saved with their original filenames appended by a timestamp.
 
