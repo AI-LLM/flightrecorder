@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from typing import Any
+from typing import Any, Union
 import logging
 from logging import getLogger
 from concurrent_log_handler import ConcurrentRotatingFileHandler
@@ -35,15 +35,18 @@ def csvEncode(data: Any)->str:
     writer.writerow(data)
     return output.getvalue().strip()
 
-def getLog(watch_dir):
-    log = getLogger(watch_dir)
+def getPaths(watch_dir: str) -> tuple[str, str]:
     # Use an absolute path to prevent file rotation trouble.
     rep_dir = os.path.join(os.path.abspath(watch_dir), REPOSITORY)
     if not os.path.exists(rep_dir):
         os.makedirs(rep_dir)
-    logfile = os.path.join(rep_dir, LOG_FILE)
-    # Rotate log after reaching 512K, keep 5 old copies.
-    rotateHandler = ConcurrentRotatingFileHandler(logfile, "a", 512 * 1024, 5)
+    return rep_dir, os.path.join(rep_dir, LOG_FILE)
+
+def getLog(watch_dir: str) -> tuple[str, str]:
+    log = getLogger(watch_dir)
+    rep_dir, log_file = getPaths(watch_dir)
+    # Rotate log after reaching 1024K, keep 5 old copies.
+    rotateHandler = ConcurrentRotatingFileHandler(log_file, "a", 1024 * 1024, 5)
     rotateHandler.setFormatter(formatter)
     log.addHandler(rotateHandler)
     screen_handler = logging.StreamHandler(stream=sys.stderr)
@@ -51,3 +54,27 @@ def getLog(watch_dir):
     log.addHandler(screen_handler)
     log.setLevel(logging.INFO)
     return rep_dir, log
+
+def findLastVersion(watch_dir: str, change_file_path:str) -> Union[str, None]:
+    """return relative_path or None"""
+    _, log_file = getPaths(watch_dir)
+
+    if not os.path.exists(log_file):
+        print("\033[31m"+"!"*8+f"log file {log_file} does not exist\033[0m")
+        return None
+
+    with open(log_file, 'r') as f:
+        # Read file in reverse order to find most recent first
+        lines = f.readlines()
+        for line in reversed(lines):
+            try:
+                # Split CSV line
+                reader = csv.reader([line.strip()])
+                row = next(reader)
+                if len(row) >= 6 and row[4] == change_file_path:
+                    return row[5]
+            except Exception as e:
+                print("\033[31m"+"!"*8+f"Error parsing log line: {str(e)}\033[0m")
+                continue
+
+    return None

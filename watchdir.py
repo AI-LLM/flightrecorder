@@ -18,7 +18,7 @@ import os
 import shutil
 import sys
 import time
-from common import REPOSITORY,getLog,csvEncode
+from common import REPOSITORY,getLog,csvEncode,findLastVersion
 
 TAG = "FC"
 
@@ -42,14 +42,24 @@ if __name__ == '__main__':
                                 os.makedirs(new_path)
                                 log.info(csvEncode((TAG,) + change + (relative_path,)))
                             except Exception as e:
-                                print("\033[91m" + "!!!!!!!!" + str(e) + "\033[0m")
+                                print("\033[91m" + "!"*8 + str(e) + "\033[0m")
                         else:
+                            last = findLastVersion(watch_dir, change[1])
+                            if last is not None:
+                                try:
+                                    with open(os.path.join(rep_dir, last), 'rb') as f1, open(change[1], 'rb') as f2:
+                                        if f1.read() == f2.read():
+                                            log.info(csvEncode((TAG,) + change + (last,)))
+                                            continue
+                                except Exception as e:
+                                    print("\033[91m" + "!"*8 + str(e) + "\033[0m")
+
                             new_path = os.path.join(rep_dir, new_name)
                             try:
                                 shutil.copy2(change[1], new_path)
                                 log.info(csvEncode((TAG,) + change + (new_name,)))
                             except Exception as e:
-                                print("\033[91m" + "!!!!!!!!" + str(e) + "\033[0m")
+                                print("\033[91m" + "!"*8 + str(e) + "\033[0m")
 
     except KeyboardInterrupt:
         print('stopped via KeyboardInterrupt')
