@@ -1,4 +1,4 @@
-# Flight Recorder ("black box") of your AI Copiloting 
+# Flight Recorder ("black box") for your AI Copiloting 
 
 ## Usage
 
