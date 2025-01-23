@@ -21,7 +21,8 @@ setup virtual environment in your favourite way with python 3.11 (as I'm using. 
 pip install -r requirements.txt
 ```
 
-[Zed](https://zed.dev) is used in the example, you can replace **mitmproxy --mode local:"Zed"** in script *run.sh* with the name of your Editor or IDE. When you run it, any file operations in the working directory, as well as AI API calls made by the Editor/IDE, will be recorded in its *.flightrecorder* subdirectory.
+[Zed](https://zed.dev) is used in the example, you can edit **mitmproxy --mode local:"<ins>App Name</ins>"** in script *run.sh* with the name of your Editor or IDE, or [intercept more traffic with other modes](https://docs.mitmproxy.org/stable/concepts-modes/). 
 ```bash
 ./run.sh <path of working dir>
 ```
+When you run the script, any file operations in the working directory, as well as AI API calls made by the Editor/IDE, will be recorded in its *.flightrecorder* subdirectory.
